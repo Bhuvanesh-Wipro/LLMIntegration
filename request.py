@@ -37,18 +37,31 @@ def documentDownload():
     bucket_name = "wilegaldocs"
     # List objects in the bucket
     response = s3.list_objects_v2(Bucket=bucket_name)
+    
     for obj in response["Contents"]:
         # Extract the filename from the object key
-        filename = obj["Key"].split("/")[-1]
-        if filename == caseId:
+        filename = obj["Key"]
+        if filename.startswith(caseId) and filename.endswith(".pdf"):
             # Download the object to your server
-            s3.download_file(bucket_name, obj["Key"], filename)
+            # file_path=f"/Users/CH20423189/Desktop/NoStandaloneApp/src/assets/docs/caseDoc.pdf"
+            s3.download_file(bucket_name, obj["Key"], "caseDoc.pdf")
             current_directory = os.getcwd()
-            file_path = os.path.join(current_directory, filename)
+            file_path = os.path.join(current_directory, "caseDoc.pdf")
+            jsonData = {"path": file_path}
+            # current_directory = os.getcwd()
+            # file_path = os.path.join(current_directory, filename)
             jsonData = {"path": file_path}
             return jsonify(jsonData)
-        else:
-            return jsonify({"msg": "No data found"})
+        # filename = obj["Key"].split("/")[-1]
+        # if filename == caseId:
+        #     # Download the object to your server
+        #     s3.download_file(bucket_name, obj["Key"], filename)
+        #     current_directory = os.getcwd()
+        #     file_path = os.path.join(current_directory, filename)
+        #     jsonData = {"path": file_path}
+        #     return jsonify(jsonData)
+     
+    return jsonify({"msg": "No data found"})
 
 
 
